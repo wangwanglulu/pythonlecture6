@@ -1,0 +1,1116 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lecture 6</title>
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/white.css">
+    <link rel="stylesheet" href="css/theme/custom.css">
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/googlecode.css">
+    <!-- Printing and PDF exports -->
+    <script>
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+    document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+</head>
+
+<body>
+    <div class="reveal" style="background-color: #fff;">
+        <div class="slides">
+            <section data-background-video="bgm.mp4" data-background-video-loop data-background-video-muted style="text-align: left;">
+                <h2 style="color: white">Python Programming</h2>
+                <h5 style="color: white">Lecture 6 Functions, Modules</h5>
+            </section>
+            <section>
+                <section data-background="#2980b9" style="color: white">
+                    <h2 style="color: white">6.1 Functions (2)</h2>
+                    <h5>mutable vs. immutable, variable scope</h5>
+                </section>
+                <section>
+                    <h4>mutable vs. immutable</h4>
+                    <ul>
+                        <li>
+                            <p>For immutable objects (number, string, tuple), the assignment inside a function cannot change the value of the variable outside the function even if the variable name inside is the same with the variable name outside.</p>
+                        </li>
+                    </ul>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+def ChangeInt(a):
+    a = 10
+
+b = 2
+ChangeInt(b)
+print(b) #output: 2
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+def ChangeInt(b):
+    b = 10
+
+b = 2
+ChangeInt(b)
+print(b) #output: 2
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+def ChangeInt(b):
+    b = 10
+    return b
+
+b = 2
+x = ChangeInt(b)
+print(x, b) #output: 10 2
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+def ChangeInt(a): 
+    b = 10
+    return b
+
+b = 2
+x = ChangeInt(b)
+print(x, b) #output: 10 2
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <h3>Examples</h3>
+                    <div class="div-a">
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+def ChangeInt(a):
+    a = 10
+    print(a)
+    return a
+
+b = 2
+ChangeInt(b)
+print(b) 
+print(ChangeInt(b))
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-b">
+                        <div class="fragment">
+                            <pre><code class="output" data-trim contenteditable>
+10
+2
+10
+10
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-a">
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+def ChangeInt(a):
+    a = 10
+    print(a)
+
+b = 2
+ChangeInt(b)
+print(b) 
+print(ChangeInt(b))
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-b">
+                        <div class="fragment">
+                            <pre><code class="output" data-trim contenteditable>
+10
+2
+10
+None
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <ul>
+                        <li>
+                            <p>For mutable objects (list, dictionary), the <b>assignment</b> inside a function cannot change the value of the variable outside the function.<b> (the same with immutable objects!)</b></p>
+                        </li>
+                    </ul>
+                    <div class="div-a">
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+def changeme(mylist):
+   mylist = [1,2]
+   print("inside: ", mylist)
+ 
+x = [10,20]
+changeme(x)
+print("outside: ", x)
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-b">
+                        <div class="fragment">
+                            <pre><code class="output" data-trim contenteditable>
+inside:  [1, 2]
+outside:  [10, 20]
+</code></pre>
+                        </div>
+                    </div>
+                    <ul>
+                        <li class="fragment">
+                            <p>However, the modification <b>can</b> change the value of the variable outside.</p>
+                        </li>
+                    </ul>
+                    <div class="div-a">
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+def changeme(mylist):
+   mylist.extend([1,2])
+   print ("inside: ", mylist)
+ 
+x = [10,20]
+changeme(x)
+print ("outside: ", x)
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-b">
+                        <div class="fragment">
+                            <pre><code class="output" data-trim contenteditable>
+inside:  [10, 20, 1, 2]
+outside:  [10, 20, 1, 2]
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <h4>Variable Scope</h4>
+                    <p>In Python, module, class, def, lambda can introduce new variable scope, if/elif/else/, try/except, for/while will not introduce new variable scope.</p>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+if True:
+    msg = 'I am from Shanghai'
+print(msg) # We can use msg.
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+def test():
+    msg = 'I am from Shanghai'
+print(msg) # error
+</code></pre>
+                    </div>
+                    <ul>
+                        <li class="fragment">
+                            <p>Local$\rightarrow$Enclosing$\rightarrow$Global$\rightarrow$ Build-in</p>
+                        </li>
+                    </ul>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+ 
+g_count = 0  # Global
+def outer():
+    o_count = 1  # Enclosing
+    def inner():
+        i_count = 2  # Local
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <p class="fragment">New Assignment</p>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+msg = 'I am from Shanghai'
+def test():
+    msg = 'I am from Beijing'
+    print(msg) 
+test()
+print(msg)
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output" contenteditable>
+I am from Beijing
+I am from Shanghai
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                    <p class="fragment"><b>Reference</b></p>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+msg = 'I am from Shanghai'
+def test():
+    print(msg) 
+test()
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output" contenteditable>
+I am from Shanghai
+
+
+</code></pre>
+                        </div>
+                    </div>
+                    <p class="fragment">Modification</p>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+msg = 'I am from Shanghai'
+def test():
+    print(msg) 
+    msg = 'I am from Beijing' 
+test() 
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="error" contenteditable>
+UnboundLocalError: local variable 'msg' 
+referenced before assignment
+
+
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <ul>
+                        <li class="fragment">
+                            <p>How to modify the variable outside? The <b>global</b> keyword</p>
+                        </li>
+                    </ul>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+num = 1
+def fun():
+    global num
+    num = 123
+    print(num)
+fun()
+print(num)
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output" contenteditable>
+123
+123
+
+
+ 
+
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+num = 1
+def fun():
+    print(num)
+    global num  
+    num = 123
+    print(num)
+fun()
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="error" contenteditable>
+SyntaxError: name 'num' is used 
+prior to global declaration
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+a = 10
+def test():
+    a = a + 1
+    print(a)
+test() # error
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+a = 10
+def test():
+    global a 
+    a = a + 1
+    print(a)
+test() # output: 11
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+a = 10
+def test():
+    a=10
+    a = a + 1
+    print(a)
+test() # output: 11
+print(a) # output: 10
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <h5>The nonlocal keyword</h6>
+                        <div class="div-c">
+                            <div class="fragment">
+                                <pre><code class="line-numbers" data-trim contenteditable>
+def outer():
+    num = 10
+    def inner():
+        nonlocal num   
+        # nonlocal keyword
+        num = 100
+        print(num)
+    inner()
+    print(num)
+outer()
+</code></pre>
+                            </div>
+                        </div>
+                        <div class="div-d">
+                            <div class="fragment">
+                                <pre><code class="output"  contenteditable>
+100
+100
+
+
+
+
+
+
+
+</code></pre>
+                            </div>
+                        </div>
+                        <div class="div-c">
+                            <div class="fragment">
+                                <pre><code class="line-numbers" data-trim contenteditable>
+def outer():
+    num = 10
+    def inner():
+        global num  
+        # global does not work
+        num = 100
+        print(num)
+    inner()
+    print(num)
+outer()
+</code></pre>
+                            </div>
+                        </div>
+                        <div class="div-d">
+                            <div class="fragment">
+                                <pre><code class="output"  contenteditable>
+100 
+10
+
+
+
+
+
+
+
+</code></pre>
+                            </div>
+                        </div>
+                </section>
+                <section>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+def outer():
+    global num
+    num = 10
+    def inner():
+        global num   
+        num = 100
+        print(num)
+    inner()
+    print(num)
+outer()
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output"  contenteditable>
+100
+100
+
+
+
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+def outer():
+    global num
+    num = 10
+    def inner():  
+        num = 100
+        print(num)
+    inner()
+    print(num)
+outer()
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output"  contenteditable>
+100 
+10
+
+
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+                                <section>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+num = 3                            
+def outer():
+    global num
+    num = 10
+    def inner():  
+        num = 100
+        print(num)
+    inner()
+    print(num)
+outer()
+print(num)
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output"  contenteditable>
+100
+10
+10
+
+
+
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+num = 3                            
+def outer():
+    num = 10
+    def inner(): 
+        global num 
+        num = 100
+        print(num)
+    inner()
+    print(num)
+outer()
+print(num)
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output"  contenteditable>
+100
+10
+100
+
+
+
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+                                                <section>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+num = 3                            
+def outer():
+    num = 10
+    def inner(): 
+        nonlocal num 
+        num = 100
+        print(num)
+    inner()
+    print(num)
+outer()
+print(num)
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output"  contenteditable>
+100
+100
+3
+
+
+
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-c">
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+num = 3                            
+def outer():
+    global num
+    num = 10
+    def inner(): 
+        global num 
+        num = 100
+        print(num)
+    inner()
+    print(num)
+outer()
+print(num)
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="div-d">
+                        <div class="fragment">
+                            <pre><code class="output"  contenteditable>
+100
+100
+100
+
+
+
+
+
+
+
+
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+            <section>
+                <section data-background="#2980b9" style="color: white">
+                    <h2 style="color: white">6.2 Modules</h2>
+                </section>
+                <section>
+                    <ul>
+                        <li class="fragment">
+                            <p>Module is a Python file, followed with .py</p>
+                        </li>
+                        <li class="fragment">
+                            <p>Storing Your Functions in Modules</p>
+                        </li>
+                    </ul>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+def make_pizza(size, *toppings):
+    print("\nMaking a " + str(size) +
+        "-inch pizza with the following toppings:")
+    for topping in toppings:
+        print("- " + topping)
+</code></pre>
+                    </div>
+                    <ul>
+                        <li class="fragment">
+                            <p>It is saved as "pizza.py" file.</p>
+                        </li>
+                        <li class="fragment">
+                            <p>We make a separate file called making_pizzas.py in the same directory as pizza.py.</p>
+                        </li>
+                    </ul>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+import pizza
+
+pizza.make_pizza(16, 'pepperoni')
+pizza.make_pizza(12, 'mushrooms', 'green peppers', 'extra cheese')
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <ul>
+                        <li class="fragment">
+                            <p><b>Be Careful!</b></p>
+                        </li>
+                    </ul>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+def make_pizza(size, *toppings):
+    print("\nMaking a " + str(size) +
+        "-inch pizza with the following toppings:")
+    for topping in toppings:
+        print("- " + topping)
+
+make_pizza(16, 'pepperoni')
+
+#saved as pizza.py
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+import pizza
+
+#in another python file
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="output" data-trim contenteditable>
+Making a 16-inch pizza with the following toppings:
+- pepperoni
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <ul>
+                        <li class="fragment">
+                            <p><b>A way to solve it</b></p>
+                        </li>
+                    </ul>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+def make_pizza(size, *toppings):
+    print("\nMaking a " + str(size) +
+        "-inch pizza with the following toppings:")
+    for topping in toppings:
+        print("- " + topping)
+
+if __name__ == '__main__': 
+    make_pizza(16, 'pepperoni')
+
+#saved as pizza.py
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+import pizza
+
+#in another python file
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <p class="fragment">Importing Specific Functions</p>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+#from module_name import function_name
+#from module_name import function_0, function_1, function_2
+
+from pizza import make_pizza
+
+make_pizza(16, 'pepperoni')
+make_pizza(12, 'mushrooms', 'green peppers', 'extra cheese')
+</code></pre>
+                    </div>
+                    <p class="fragment">Using as to Give a Function an Alias</p>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+from pizza import make_pizza as mp
+mp(16, 'pepperoni')
+mp(12, 'mushrooms', 'green peppers', 'extra cheese')
+</code></pre>
+                    </div>
+                    <p class="fragment">Using as to Give a Module an Alias</p>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+import pizza as p
+p.make_pizza(16, 'pepperoni')
+p.make_pizza(12, 'mushrooms', 'green peppers', 'extra cheese')
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <ul>
+                        <li class="fragment">
+                            <p>Importing All Functions in a Module</p>
+                        </li>
+                    </ul>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+from pizza import *
+make_pizza(16, 'pepperoni')
+make_pizza(12, 'mushrooms', 'green peppers', 'extra cheese')
+</code></pre>
+                    </div>
+                    <ul>
+                        <li class="fragment">
+                            <p>The asterisk in the import statement tells Python to copy every function from the module pizza into this program file. Because every function is imported, you can call each function by name without using the dot notation.
+                            </p>
+                        </li>
+                        <li class="fragment">
+                            <p>However, it's best not to use this approach when you're working with larger modules that you didn't write: if the module has a function name that matches an existing name in your project, you can get some unexpected results.
+                            </p>
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h3>Search for Modules</h3>
+                    <ul>
+                        <li class="fragment">
+                            <p>When a module named is imported, the interpreter first searches for a built-in module with that name. If not found, it then searches for a file named xxx.py in a list of directories given by the variable sys.path. sys.path is initialized from these locations:</p>
+                        </li>
+                        <li class="fragment">
+                            <p>The directory containing the input script (or the current directory when no file is specified).</p>
+                        </li>
+                        <li class="fragment">
+                            <p>PYTHONPATH (a list of directory names, with the same syntax as the shell variable PATH).</p>
+                        </li>
+                        <li class="fragment">
+                            <p>The installation-dependent default.</p>
+                        </li>
+                    </ul>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+import sys
+print(sys.path)
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <h3>Packages</h3>
+                    <ul>
+                        <li class="fragment">
+                            <p>Packages are namespaces which contain multiple packages and modules themselves. They are simply directories, but with a twist.</p>
+                        </li>
+                        <li class="fragment">
+                            <p>Each package in Python is a directory which <b>MUST</b> contain a special file called <b>__init__.py</b>. This file can be empty, and it indicates that the directory it contains is a Python package, so it can be imported the same way a module can be imported.</p>
+                        </li>
+                    </ul>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+mycompany
+├─ __init__.py
+├─ abc.py
+└─ xyz.py
+</code></pre>
+                    </div>
+                    <ul>
+                        <li class="fragment">
+                            <p>The name of modules are mycompany.abc and mycompany.xyz</p>
+                        </li>
+                        <li class="fragment">
+                            <p><b>Be careful! The name of modules you created should not be in conflict with the name of any system module, or any build-in function.</b></p>
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h3>Third party modules</h3>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+import urllib
+dir(urllib)
+</code></pre>
+                    </div>
+                    <ul>
+                        <li class="fragment">
+                            <p>For Python only, open the <b>cmd</b>.</p>
+                        </li>
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+pip install pillow
+</code></pre>
+                        </div>
+                        <li class="fragment">
+                            <p>For Anaconda only, open the <b>anaconda prompt</b>.</p>
+                        </li>
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+conda install pillow
+pip install pillow
+</code></pre>
+                        </div>
+                        <li class="fragment">
+                            <p>If you want to use both the Python and Anaconda, there might be some conflicts. Thus, please change file name in the Anaconda. D:\Anaconda\Scripts, pip.exe and pip-script.exe to <b>condapip.exe</b> and <b>condapip-script.exe</b></p>
+                        </li>
+                        <div class="fragment">
+                            <pre><code class="line-numbers" data-trim contenteditable>
+condapip install pillow #anaconda
+</code></pre>
+                        </div>
+                    </ul>
+                </section>
+                <section>
+                    <h5>Uninstall the package</h5>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+pip uninstall pillow
+conda uninstall pillow
+</code></pre>
+                    </div>
+                    <h5 class="fragment">List all the packages</h5>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+pip list
+conda list
+</code></pre>
+                    </div>
+                    <h5 class="fragment">Examples</h5>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+conda install you-get 
+conda install pyperclip
+conda install itchat 
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+import pyperclip
+pyperclip.copy("abc")
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+import itchat
+itchat.auto_login()
+
+friends = itchat.get_friends(update=True)[0:]
+
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+male = 0
+female = 0
+other = 0
+for i in friends[1:]:
+    sex = i['Sex']
+    if sex == 1:
+        male = male + 1
+    elif sex ==2:
+        female = female + 1
+    else:
+        other = other + 1
+total = len(friends[1:])
+
+print('男性好友： {}%'.format(male/total*100))
+print('女性好友： {}%'.format(female/total*100)) 
+print('其他： {}%' .format(other/total*100))
+
+itchat.logout() 
+</code></pre>
+                    </div>
+                </section>
+            </section>
+            
+            <section>
+                <section data-background="#2c3e50" style="color: white; text-align: left;">
+                    <h2 style="color: white">Summary</h2>
+                    <ul>
+                        <li>Functions</li>
+                        <ul>
+                            <li>Reading: Python for Everybody, Chapter 4</li>
+                            <li>Reading: Python Crash Course, Chapter 8</li>
+                        </ul>
+                    </ul>
+                </section>
+            </section>
+        </div>
+    </div>
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+    <script>
+    // More info about config & dependencies:
+    // - https://github.com/hakimel/reveal.js#configuration
+    // - https://github.com/hakimel/reveal.js#dependencies
+    Reveal.initialize({
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 960,
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        // Bounds for smallest/largest possible scale to apply to content
+        minScale: 0.2,
+        maxScale: 1.5,
+
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Set default timing of 2 minutes per slide
+        defaultTiming: 120,
+
+        // Display the page number of the current slide
+        slideNumber: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autolaying embedded media (video/audio/iframe)
+        // - null: Media will only autoplay if data-autoplay is present
+        // - true: All media will autoplay, regardless of individual setting
+        // - false: No media will autoplay, regardless of individual setting
+        autoPlayMedia: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: Reveal.navigateNext,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // Hides the address bar on mobile devices
+        hideAddressBar: true,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style
+        transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Parallax background image
+        parallaxBackgroundImage: '', // e.g. "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'"
+
+        // Parallax background size
+        parallaxBackgroundSize: '', // CSS syntax, e.g. "2100px 900px"
+
+        // Number of pixels to move the parallax background per slide
+        // - Calculated automatically unless specified
+        // - Set to 0 to disable movement along an axis
+        parallaxBackgroundHorizontal: null,
+        parallaxBackgroundVertical: null,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        dependencies: [
+            { src: 'plugin/markdown/marked.js' },
+            { src: 'plugin/markdown/markdown.js' },
+            { src: 'plugin/notes/notes.js', async: true },
+            { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+            // Zoom in and out with Alt+click
+            { src: 'plugin/zoom-js/zoom.js', async: true },
+
+            // Speaker notes
+            { src: 'plugin/notes/notes.js', async: true },
+
+            // MathJax
+            { src: 'plugin/math/math.js', async: true },
+            { src: 'plugin/line-numbers/line-numbers.js' }
+        ]
+    });
+    </script>
+</body>
+
+</html>
